@@ -14,10 +14,9 @@ if (!apiKey) {
 
 // 初始化 Google Generative AI 模型
 const model = new ChatGoogleGenerativeAI({
-  modelName: "gemini-pro",
+  model: "gemini-pro",
   apiKey: apiKey,
   temperature: 0.7,
-  maxTokens: 2048,
 });
 
 // 香水推荐提示模板
@@ -55,7 +54,7 @@ const PERFUME_RECOMMENDATION_TEMPLATE = `
 
 // 结构化输出解析器
 const outputParser = StructuredOutputParser.fromNamesAndDescriptions({
-  perfumes: "推荐的香水列表，包含" + 3 + "款香水的详细信息",
+  perfumes: "推荐的香水列表，包含若干款香水的详细信息",
 });
 
 // 创建提示模板
@@ -91,7 +90,7 @@ class PerfumeRecommendationService {
       );
 
       // 为每款香水添加唯一ID
-      const perfumesWithId = parsedResult.perfumes.map(
+      const perfumesWithId = (parsedResult.perfumes as unknown as Omit<Perfume, "id">[]).map(
         (perfume: Omit<Perfume, "id">, index: number) => ({
           ...perfume,
           id: `perfume_${Date.now()}_${index}`,
