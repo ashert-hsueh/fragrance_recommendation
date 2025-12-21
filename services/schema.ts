@@ -23,7 +23,8 @@ export const PerfumeSchema = z.object({
         retailer: z.string().describe("零售商名称"),
         price: z.number().describe("价格"),
         currency: z.literal("CNY").describe("货币单位"),
-        url: z.string().url().describe("购买链接"),
+        link: z.string().url().describe("购买链接"),
+        stockStatus: z.string().describe("库存状态"),
     })).describe("购买选项"),
 
     gender: z.enum(["unisex", "men", "women"]).describe("适用性别"),
