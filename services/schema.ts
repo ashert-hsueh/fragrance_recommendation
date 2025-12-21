@@ -15,8 +15,12 @@ export const PerfumeSchema = z.object({
     }).describe("香调信息"),
 
     ingredientAnalysis: z.object({
-        mainNotes: z.array(z.string()).describe("主要香调"),
-        highlights: z.array(z.string()).describe("香水亮点"),
+        mainIngredients: z.array(z.string()).describe("主要成分"),
+        naturalIngredients: z.array(z.string()).describe("天然成分"),
+        syntheticIngredients: z.array(z.string()).describe("合成成分"),
+        allergyInfo: z.string().describe("过敏原信息"),
+        veganFriendly: z.boolean().describe("是否适合素食主义者"),
+        crueltyFree: z.boolean().describe("是否无动物实验"),
     }).describe("成分分析"),
 
     purchaseOptions: z.array(z.object({
