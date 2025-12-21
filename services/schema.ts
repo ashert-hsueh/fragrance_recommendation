@@ -6,7 +6,7 @@ export const PerfumeSchema = z.object({
     description: z.string().describe("描述"),
     imageUrl: z.string().url().describe("产品图片 URL"),
     price: z.number().describe("官方价格"),
-    currency: z.literal("CNY"),
+    currency: z.string(),
 
     scentNotes: z.object({
         top: z.array(z.string()).describe("前调"),
