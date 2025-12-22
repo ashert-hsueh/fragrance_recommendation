@@ -120,7 +120,7 @@ const PERFUME_RECOMMENDATION_TEMPLATE = `
 6. currency: 货币单位（字符串，统一为"CNY"）
 7. scentNotes: 香调信息（对象，包含top、middle、base三个数组）
 8. ingredientAnalysis: 成分分析（对象）
-9. purchaseOptions: 购买途径与比价（数组，至少包含3个购买选项）
+9. purchaseOptions: 购买途径与比价（数组，包含多个购买选项）
 10. gender: 适用性别（字符串，只能是"unisex"、"men"或"women"）
 11. concentration: 浓度（字符串，例如"EDT"、"EDP"、"Parfum"等）
 12. longevity: 持久度描述（字符串，例如"4-6小时"、"6-8小时"等）
