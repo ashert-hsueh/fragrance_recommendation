@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import { Send, X, MessageCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Perfume } from "@/types";
@@ -102,7 +103,7 @@ const RecommendationDialog: React.FC<RecommendationDialogProps> = ({
   };
 
   // 处理键盘回车
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
@@ -118,6 +119,7 @@ const RecommendationDialog: React.FC<RecommendationDialogProps> = ({
 
   // 处理卡片点击
   const handleCardClick = (perfume: Perfume) => {
+    sessionStorage.setItem(`perfume:${perfume.id}`, JSON.stringify(perfume));
     // 导航到香水详情页
     router.push(`/perfume/${perfume.id}`);
     // 关闭对话框
@@ -149,7 +151,7 @@ const RecommendationDialog: React.FC<RecommendationDialogProps> = ({
             <div className="text-center py-12 text-gray-500">
               <MessageCircle className="w-12 h-12 mx-auto mb-4 text-gray-300" />
               <p>开始与香水推荐助手对话吧！</p>
-              <p className="text-sm mt-2">例如："推荐一款适合夏天的男士香水"</p>
+              <p className="text-sm mt-2">例如：推荐一款适合夏天的男士香水</p>
             </div>
           ) : (
             messages.map((message) => (
@@ -178,10 +180,13 @@ const RecommendationDialog: React.FC<RecommendationDialogProps> = ({
                           <div className="flex items-center gap-4">
                             {/* 香水图片 */}
                             <div className="relative w-20 h-20 bg-gray-50 rounded-md overflow-hidden">
-                              <img
+                              <Image
                                 src={perfume.imageUrl}
                                 alt={`${perfume.brand} ${perfume.name}`}
+                                fill
                                 className="w-full h-full object-contain p-2"
+                                sizes="80px"
+                                unoptimized
                               />
                             </div>
 
@@ -240,9 +245,9 @@ const RecommendationDialog: React.FC<RecommendationDialogProps> = ({
             <textarea
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyDown}
               placeholder="输入您的香水需求..."
-              className="flex-1 resize-none rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 resize-none rounded-lg border border-gray-300 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               rows={1}
               style={{ minHeight: "44px", maxHeight: "120px" }}
             />

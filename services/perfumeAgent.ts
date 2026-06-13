@@ -88,20 +88,20 @@ const mockPerfumes: Perfume[] = [
     sillage: "强烈"
   }
 ];
-// 环境变量验证
-const apiKey = process.env.GOOGLE_API_KEY;
-if (!apiKey) {
-  throw new Error(
-    "GOOGLE_API_KEY is not set in the environment variables"
-  );
-}
+const getModel = () => {
+  const apiKey = process.env.GOOGLE_API_KEY;
 
-// 初始化 Google Generative AI 模型
-const model = new ChatGoogleGenerativeAI({
-  model: "gemini-2.5-flash",
-  apiKey: apiKey,
-  temperature: 0.7,
-});
+  if (!apiKey) {
+    console.warn("GOOGLE_API_KEY is not set; using mock perfume data.");
+    return null;
+  }
+
+  return new ChatGoogleGenerativeAI({
+    model: "gemini-2.5-flash",
+    apiKey,
+    temperature: 0.7,
+  });
+};
 
 // 香水推荐提示模板
 const PERFUME_RECOMMENDATION_TEMPLATE = `
@@ -161,6 +161,12 @@ class PerfumeRecommendationService {
     request: RecommendationRequest
   ): Promise<Perfume[]> {
     try {
+      const model = getModel();
+
+      if (!model) {
+        return mockPerfumes;
+      }
+
       // 生成提示
       const formattedPrompt = await promptTemplate.format({
         query: request.query,
