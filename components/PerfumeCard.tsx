@@ -1,13 +1,9 @@
 // 香水卡片组件
+"use client";
+
 import React, { useState } from "react";
 import Image from "next/image";
-import {
-  ChevronDown,
-  ChevronUp,
-  ShoppingCart,
-  Info,
-  Tag,
-} from "lucide-react";
+import { ShoppingCart, Info } from "lucide-react";
 import { Perfume } from "@/types";
 
 interface PerfumeCardProps {
@@ -19,9 +15,10 @@ const PerfumeCard: React.FC<PerfumeCardProps> = ({ perfume }) => {
   const [showPurchaseOptions, setShowPurchaseOptions] = useState(false);
 
   // 获取最低价格
-  const lowestPrice = Math.min(
-    ...perfume.purchaseOptions.map((option) => option.price)
-  );
+  const lowestPrice =
+    perfume.purchaseOptions.length > 0
+      ? Math.min(...perfume.purchaseOptions.map((option) => option.price))
+      : perfume.price;
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-gray-300">
@@ -62,13 +59,16 @@ const PerfumeCard: React.FC<PerfumeCardProps> = ({ perfume }) => {
                 </span>
               )}
             </div>
-            <p className="text-xs text-gray-500 mt-1">
-              最低价来自 {
-                perfume.purchaseOptions.find(
-                  (option) => option.price === lowestPrice
-                )?.retailer
-              }
-            </p>
+            {perfume.purchaseOptions.length > 0 && (
+              <p className="text-xs text-gray-500 mt-1">
+                最低价来自{" "}
+                {
+                  perfume.purchaseOptions.find(
+                    (option) => option.price === lowestPrice
+                  )?.retailer
+                }
+              </p>
+            )}
           </div>
 
           {/* 香调信息 */}
