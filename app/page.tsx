@@ -1,11 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RecommendationDialog from "@/components/RecommendationDialog";
 import { MessageCircle } from "lucide-react";
 
 export default function Home() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const shouldOpenRecommendation =
+      searchParams.get("recommendation") === "open" ||
+      sessionStorage.getItem("recommendationDialogOpen") === "true";
+
+    if (shouldOpenRecommendation) {
+      sessionStorage.setItem("recommendationDialogOpen", "true");
+      window.history.replaceState(null, "", "/");
+      queueMicrotask(() => {
+        setIsDialogOpen(true);
+      });
+    }
+  }, []);
+
+  const openDialog = () => {
+    sessionStorage.setItem("recommendationDialogOpen", "true");
+    setIsDialogOpen(true);
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
@@ -23,7 +43,7 @@ export default function Home() {
         </div>
         <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
           <button
-            onClick={() => setIsDialogOpen(true)}
+            onClick={openDialog}
             className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[200px]"
           >
             <MessageCircle className="w-5 h-5" />

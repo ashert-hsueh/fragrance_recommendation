@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Info, ShoppingCart } from "lucide-react";
 import { Perfume } from "@/types";
+import PerfumeImage from "@/components/PerfumeImage";
 
 interface PerfumeDetailClientProps {
   id: string;
@@ -79,13 +79,17 @@ export default function PerfumeDetailClient({ id }: PerfumeDetailClientProps) {
   const lowestRetailer = perfume.purchaseOptions.find(
     (option) => option.price === lowestPrice
   )?.retailer;
+  const handleReturnToRecommendations = () => {
+    sessionStorage.setItem("recommendationDialogOpen", "true");
+    router.push("/?recommendation=open");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="border-b border-gray-200 bg-white">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <button
-            onClick={() => router.back()}
+            onClick={handleReturnToRecommendations}
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -100,13 +104,11 @@ export default function PerfumeDetailClient({ id }: PerfumeDetailClientProps) {
         <section className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
           <div className="flex flex-col md:flex-row">
             <div className="relative h-96 w-full bg-gray-50 md:h-auto md:w-1/3">
-              <Image
+              <PerfumeImage
                 src={perfume.imageUrl}
                 alt={`${perfume.brand} ${perfume.name}`}
-                fill
                 className="object-contain p-8"
                 sizes="(max-width: 768px) 100vw, 33vw"
-                unoptimized
               />
             </div>
 

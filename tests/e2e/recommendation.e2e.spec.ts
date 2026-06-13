@@ -5,7 +5,7 @@ const perfume = {
   name: "Santal 33",
   brand: "Le Labo",
   description: "温暖的中性木质香，带有檀香、雪松和微妙皮革气息。",
-  imageUrl: "https://example.com/santal.jpg",
+  imageUrl: "https://example.com/santal-missing.jpg",
   price: 1500,
   currency: "CNY",
   scentNotes: {
@@ -39,6 +39,10 @@ const perfume = {
 test("user can request recommendations and open a perfume detail page", async ({
   page,
 }) => {
+  await page.route("https://example.com/santal-missing.jpg", async (route) => {
+    await route.fulfill({ status: 404, body: "" });
+  });
+
   await page.route("**/api/recommend", async (route) => {
     await route.fulfill({
       status: 200,
@@ -66,12 +70,22 @@ test("user can request recommendations and open a perfume detail page", async ({
 
   await expect(page.getByText("为您推荐以下 1 款香水：")).toBeVisible();
   await expect(page.getByText("Le Labo Santal 33")).toBeVisible();
+  await expect(page.getByLabel("Le Labo Santal 33 图片暂不可用")).toBeVisible();
 
   await page.getByText("Le Labo Santal 33").click();
 
   await expect(page).toHaveURL(/\/perfume\/perfume_test_1$/);
   await expect(page.getByRole("heading", { name: "Santal 33" })).toBeVisible();
+  await expect(page.getByLabel("Le Labo Santal 33 图片暂不可用")).toBeVisible();
   await expect(page.getByText("前调：小豆蔻")).toBeVisible();
   await expect(page.getByText("中调：鸢尾, 紫罗兰")).toBeVisible();
   await expect(page.getByText("后调：檀香, 雪松")).toBeVisible();
+
+  await page.getByRole("button", { name: "返回" }).click();
+
+  await expect(page).toHaveURL("/");
+  await expect(page.getByRole("heading", { name: "香水推荐助手" })).toBeVisible();
+  await expect(page.getByText("推荐一款适合夏天的男士香水")).toBeVisible();
+  await expect(page.getByText("为您推荐以下 1 款香水：")).toBeVisible();
+  await expect(page.getByText("Le Labo Santal 33")).toBeVisible();
 });

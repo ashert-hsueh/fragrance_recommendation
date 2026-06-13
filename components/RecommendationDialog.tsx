@@ -2,10 +2,10 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import Image from "next/image";
 import { Send, X, MessageCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Perfume } from "@/types";
+import PerfumeImage from "./PerfumeImage";
 
 // 对话消息类型
 interface ChatMessage {
@@ -16,17 +16,44 @@ interface ChatMessage {
   perfumes?: Perfume[];
 }
 
+interface StoredChatMessage extends Omit<ChatMessage, "timestamp"> {
+  timestamp: string;
+}
+
 interface RecommendationDialogProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+const DIALOG_OPEN_STORAGE_KEY = "recommendationDialogOpen";
+const MESSAGES_STORAGE_KEY = "recommendationDialogMessages";
+
+const restoreMessages = (): ChatMessage[] => {
+  if (typeof window === "undefined") return [];
+
+  const storedMessages = sessionStorage.getItem(MESSAGES_STORAGE_KEY);
+  if (!storedMessages) return [];
+
+  try {
+    return (JSON.parse(storedMessages) as StoredChatMessage[]).map(
+      (message) => ({
+        ...message,
+        timestamp: new Date(message.timestamp),
+      })
+    );
+  } catch (error) {
+    console.error("Failed to restore recommendation dialog messages:", error);
+    sessionStorage.removeItem(MESSAGES_STORAGE_KEY);
+    return [];
+  }
+};
 
 const RecommendationDialog: React.FC<RecommendationDialogProps> = ({
   isOpen,
   onClose,
 }) => {
   const router = useRouter();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>(restoreMessages);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -38,6 +65,14 @@ const RecommendationDialog: React.FC<RecommendationDialogProps> = ({
 
   useEffect(() => {
     scrollToBottom();
+  }, [messages]);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      sessionStorage.setItem(MESSAGES_STORAGE_KEY, JSON.stringify(messages));
+    } else {
+      sessionStorage.removeItem(MESSAGES_STORAGE_KEY);
+    }
   }, [messages]);
 
   // 发送消息
@@ -114,12 +149,15 @@ const RecommendationDialog: React.FC<RecommendationDialogProps> = ({
   const handleClose = () => {
     setMessages([]);
     setInputValue("");
+    sessionStorage.removeItem(DIALOG_OPEN_STORAGE_KEY);
+    sessionStorage.removeItem(MESSAGES_STORAGE_KEY);
     onClose();
   };
 
   // 处理卡片点击
   const handleCardClick = (perfume: Perfume) => {
     sessionStorage.setItem(`perfume:${perfume.id}`, JSON.stringify(perfume));
+    sessionStorage.setItem(DIALOG_OPEN_STORAGE_KEY, "true");
     // 导航到香水详情页
     router.push(`/perfume/${perfume.id}`);
     // 关闭对话框
@@ -180,13 +218,11 @@ const RecommendationDialog: React.FC<RecommendationDialogProps> = ({
                           <div className="flex items-center gap-4">
                             {/* 香水图片 */}
                             <div className="relative w-20 h-20 bg-gray-50 rounded-md overflow-hidden">
-                              <Image
+                              <PerfumeImage
                                 src={perfume.imageUrl}
                                 alt={`${perfume.brand} ${perfume.name}`}
-                                fill
                                 className="w-full h-full object-contain p-2"
                                 sizes="80px"
-                                unoptimized
                               />
                             </div>
 

@@ -2,9 +2,9 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
 import { ShoppingCart, Info } from "lucide-react";
 import { Perfume } from "@/types";
+import PerfumeImage from "./PerfumeImage";
 
 interface PerfumeCardProps {
   perfume: Perfume;
@@ -26,10 +26,9 @@ const PerfumeCard: React.FC<PerfumeCardProps> = ({ perfume }) => {
       <div className="flex flex-col md:flex-row">
         {/* 产品图片 */}
         <div className="relative w-full md:w-1/3 h-64 md:h-auto bg-gray-50">
-          <Image
+          <PerfumeImage
             src={perfume.imageUrl}
             alt={`${perfume.brand} ${perfume.name}`}
-            fill
             className="object-contain p-4"
             sizes="(max-width: 768px) 100vw, 33vw"
           />
