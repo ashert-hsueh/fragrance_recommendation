@@ -108,6 +108,12 @@ npm run lint
 运行 ESLint。
 
 ```bash
+npm run security:audit
+```
+
+运行 npm 依赖安全审计，检查 high 及以上级别漏洞。
+
+```bash
 npm run test:backend
 ```
 
@@ -327,6 +333,7 @@ GitHub Actions 配置文件：
 
 ```text
 .github/workflows/ci.yml
+.github/workflows/security.yml
 ```
 
 触发条件：
@@ -340,12 +347,19 @@ CI 步骤：
 1. Checkout
 2. Setup Node.js 24
 3. `npm ci`
-4. `npx playwright install --with-deps chromium`
-5. `npm run lint`
-6. `npm run test:backend`
-7. `npm run test:e2e`
-8. `npm run build`
-9. 失败时上传 Playwright traces/report
+4. `npm run security:audit`，阻断 high 及以上级别依赖漏洞
+5. `npx playwright install --with-deps chromium`
+6. `npm run lint`
+7. `npm run test:backend`
+8. `npm run test:e2e`
+9. `npm run build`
+10. 失败时上传 Playwright traces/report
+
+安全检查：
+
+- CodeQL：对 TypeScript/JavaScript 代码执行静态安全扫描，覆盖 PR、main/master push 和每周定时任务。
+- Dependency Review：在 PR 中审查依赖变更，新增 high 及以上级别风险时阻断合并。
+- npm audit：在 CI 中阻断 high 及以上级别依赖漏洞；本地可通过 `npm run security:audit` 手动运行。
 
 ## Vercel 部署
 

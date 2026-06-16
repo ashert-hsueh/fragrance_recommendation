@@ -7,17 +7,18 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "security:audit": "npm audit --audit-level=high",
     "test": "npm run test:backend && npm run test:e2e",
     "test:backend": "playwright test --project=backend",
     "test:e2e": "playwright test --config=playwright.e2e.config.ts --project=chromium"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
-    "@langchain/core": "^1.1.4",
-    "@langchain/google-genai": "^2.0.4",
-    "langchain": "^1.2.2",
+    "@langchain/core": "^1.1.49",
+    "@langchain/google-genai": "^2.1.31",
+    "langchain": "^1.4.5",
     "lucide-react": "^0.561.0",
-    "next": "16.0.10",
+    "next": "16.2.9",
     "react": "19.2.1",
     "react-dom": "19.2.1"
   },
@@ -28,7 +29,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.0.10",
+    "eslint-config-next": "16.2.9",
     "husky": "^9.1.7",
     "tailwindcss": "^4",
     "typescript": "^5"
